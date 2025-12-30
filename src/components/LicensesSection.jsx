@@ -5,7 +5,9 @@ const licenseTypes = [
   {
     id: 1,
     name: "Licencia MP3",
-    price: 99,
+    price: 50,
+    originalPrice: 99,
+    discount: 50,
     icon: Star,
     color: "from-blue-500 to-cyan-500",
     features: [
@@ -19,7 +21,9 @@ const licenseTypes = [
   {
     id: 3,
     name: "Trackout",
-    price: 120,
+    price: 60,
+    originalPrice: 120,
+    discount: 50,
     icon: Crown,
     color: "from-yellow-500 to-orange-500",
     features: [
@@ -35,7 +39,9 @@ const licenseTypes = [
   {
     id: 4,
     name: "Derechos Exclusivos",
-    price: 220,
+    price: 110,
+    originalPrice: 220,
+    discount: 50,
     icon: Crown,
     color: "from-red-500 to-rose-500",
     features: [
@@ -107,6 +113,21 @@ export default function LicensesSection() {
                   </motion.div>
                 )}
 
+                {/* Discount Badge */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0, rotate: -12 }}
+                  animate={{ opacity: 1, scale: 1, rotate: -12 }}
+                  transition={{ delay: 0.3, type: 'spring' }}
+                  className="absolute -top-3 -right-3 z-10"
+                >
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-xl border-4 border-dark">
+                    <div className="text-center">
+                      <div className="text-xl font-black text-white leading-none">50%</div>
+                      <div className="text-[10px] font-bold text-white">OFF</div>
+                    </div>
+                  </div>
+                </motion.div>
+
                 {/* Card */}
                 <div className={`
                   relative h-full glass-effect rounded-2xl p-6 border
@@ -136,11 +157,21 @@ export default function LicensesSection() {
                       {license.name}
                     </h3>
 
-                    {/* Price */}
+                    {/* Price with Discount */}
                     <div className="mb-6">
-                      <span className="text-4xl font-bold text-white">
-                        {license.price} Bs
-                      </span>
+                      <div className="flex items-center justify-center gap-3 mb-1">
+                        <span className="text-2xl font-bold text-gray-400 line-through">
+                          {license.originalPrice} Bs
+                        </span>
+                        <span className="text-4xl font-bold text-white">
+                          {license.price} Bs
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span className="inline-block px-3 py-1 bg-red-500/20 border border-red-500/50 rounded-full text-xs font-bold text-red-400">
+                          ¡Ahorra {license.originalPrice - license.price} Bs!
+                        </span>
+                      </div>
                     </div>
 
                     {/* Features */}

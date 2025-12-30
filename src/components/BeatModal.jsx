@@ -145,9 +145,36 @@ export default function BeatModal({ beat, onClose, isOpen }) {
                         </motion.div>
                       )}
 
+                      {/* Discount Badge */}
+                      <motion.div
+                        initial={{ scale: 0, rotate: -12 }}
+                        animate={{ scale: 1, rotate: -12 }}
+                        transition={{ delay: 0.6 + index * 0.1, type: 'spring' }}
+                        className="absolute -top-3 -left-3 z-10"
+                      >
+                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-xl border-2 md:border-3 border-dark">
+                          <div className="text-center">
+                            <div className="text-sm md:text-base font-black text-white leading-none">50%</div>
+                            <div className="text-[8px] md:text-[9px] font-bold text-white">OFF</div>
+                          </div>
+                        </div>
+                      </motion.div>
+
                       <h4 className="text-lg md:text-xl font-bold mb-2">{license.name}</h4>
-                      <div className="text-2xl md:text-3xl font-bold text-primary mb-3 md:mb-4">
-                        {license.price} Bs
+                      
+                      {/* Price with discount */}
+                      <div className="mb-3 md:mb-4">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-base md:text-lg text-gray-400 line-through">
+                            {license.originalPrice} Bs
+                          </span>
+                          <span className="text-2xl md:text-3xl font-bold text-primary">
+                            {license.price} Bs
+                          </span>
+                        </div>
+                        <span className="inline-block px-2 py-0.5 bg-red-500/20 border border-red-500/50 rounded-full text-xs font-bold text-red-400">
+                          ¡Ahorra {license.originalPrice - license.price} Bs!
+                        </span>
                       </div>
 
                       <ul className="space-y-2 md:space-y-3 mb-4 md:mb-6">

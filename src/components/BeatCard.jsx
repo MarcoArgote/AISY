@@ -90,12 +90,27 @@ export default function BeatCard({ beat, onSelectBeat, isPlaying, onTogglePlay }
             {beat.genre}
           </motion.div>
 
+          {/* Discount Badge */}
+          <motion.div
+            initial={{ scale: 0, rotate: -12 }}
+            animate={{ scale: 1, rotate: -12 }}
+            transition={{ delay: 0.2, type: 'spring' }}
+            className="absolute top-2 right-2 z-20"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-xl border-3 border-dark">
+              <div className="text-center">
+                <div className="text-lg font-black text-white leading-none">50%</div>
+                <div className="text-[9px] font-bold text-white">OFF</div>
+              </div>
+            </div>
+          </motion.div>
+
           {/* BPM Badge */}
           <motion.div
             initial={{ x: 100 }}
             animate={{ x: 0 }}
             transition={{ duration: isMobile ? 0.3 : 0.5 }}
-            className="absolute top-4 right-4 px-3 py-1 rounded-full glass-effect text-sm font-semibold"
+            className="absolute bottom-4 right-4 px-3 py-1 rounded-full glass-effect text-sm font-semibold"
           >
             {beat.bpm} BPM
           </motion.div>
@@ -133,9 +148,14 @@ export default function BeatCard({ beat, onSelectBeat, isPlaying, onTogglePlay }
 
           {/* Price and CTA */}
           <div className="flex items-center justify-between pt-4 border-t border-white/10">
-            <div className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-primary" />
-              <span className="text-lg font-bold">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-primary" />
+                <span className="text-sm text-gray-400 line-through">
+                  {beat.licenses[0].originalPrice} Bs
+                </span>
+              </div>
+              <span className="text-xl font-bold text-white">
                 Desde {beat.licenses[0].price} Bs
               </span>
             </div>

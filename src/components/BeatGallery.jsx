@@ -11,6 +11,51 @@ export default function BeatGallery({ beats, onSelectBeat, currentBeat, isPlayin
   return (
     <section id="beats" className="py-12">
       <div className="container mx-auto px-4">
+        {/* Promo Banner */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: -20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.6, type: 'spring' }}
+          className="mb-8 relative overflow-hidden"
+        >
+          <div className="glass-effect border-2 border-red-500/50 rounded-2xl p-6 md:p-8 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-red-500/10">
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              animate={{
+                x: ['-100%', '100%']
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+            <div className="relative z-10 text-center">
+              <motion.div
+                animate={{
+                  scale: [1, 1.05, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="inline-block mb-3"
+              >
+                <span className="text-3xl md:text-5xl font-black bg-gradient-to-r from-red-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
+                  🎉 ¡PROMOCIÓN AÑO NUEVO! 🎉
+                </span>
+              </motion.div>
+              <h3 className="text-xl md:text-3xl font-bold text-white mb-2">
+                50% DE DESCUENTO EN TODAS LAS LICENCIAS
+              </h3>
+              <p className="text-gray-300 text-sm md:text-base">
+                ¡Aprovecha esta oferta especial de inicio de año y consigue tus beats favoritos al mejor precio!
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
