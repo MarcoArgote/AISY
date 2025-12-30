@@ -12,7 +12,8 @@ export const beatsData = [
     licenses: [
       {
         name: "Licencia MP3",
-        price: 99,
+        price: 50,
+        originalPrice: 99,
         features: [
           "Formato MP3",
           "Derechos No Exclusivos",
@@ -22,7 +23,8 @@ export const beatsData = [
       },
       {
         name: "Trackout",
-        price: 120,
+        price: 60,
+        originalPrice: 120,
         features: [
           "Todas las Pistas/Stems",
           "Formatos WAV + MP3",
@@ -34,7 +36,8 @@ export const beatsData = [
       },
       {
         name: "Derechos Exclusivos",
-        price: 220,
+        price: 110,
+        originalPrice: 220,
         features: [
           "Propiedad Exclusiva Completa",
           "Todas las Pistas/Stems",

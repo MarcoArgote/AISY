@@ -149,14 +149,16 @@ export default function BeatCard({ beat, onSelectBeat, isPlaying, onTogglePlay }
           {/* Price and CTA */}
           <div className="flex items-center justify-between pt-4 border-t border-white/10">
             <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-primary" />
-                <span className="text-sm text-gray-400 line-through">
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  {beat.licenses[0].price} Bs
+                </span>
+                <span className="text-sm text-gray-500 line-through">
                   {beat.licenses[0].originalPrice} Bs
                 </span>
               </div>
-              <span className="text-xl font-bold text-white">
-                Desde {beat.licenses[0].price} Bs
+              <span className="text-xs px-2 py-0.5 bg-red-500/20 border border-red-500/50 rounded-full text-red-400 font-bold inline-block w-fit">
+                ¡Ahorra {beat.licenses[0].originalPrice - beat.licenses[0].price} Bs!
               </span>
             </div>
             <motion.button

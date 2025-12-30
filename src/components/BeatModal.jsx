@@ -160,19 +160,19 @@ export default function BeatModal({ beat, onClose, isOpen }) {
                         </div>
                       </motion.div>
 
-                      <h4 className="text-lg md:text-xl font-bold mb-2">{license.name}</h4>
+                      <h4 className="text-lg md:text-xl font-bold mb-3 md:mb-4">{license.name}</h4>
                       
                       {/* Price with discount */}
-                      <div className="mb-3 md:mb-4">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-base md:text-lg text-gray-400 line-through">
-                            {license.originalPrice} Bs
-                          </span>
-                          <span className="text-2xl md:text-3xl font-bold text-primary">
+                      <div className="mb-4 md:mb-6">
+                        <div className="flex items-baseline gap-2 mb-2">
+                          <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                             {license.price} Bs
                           </span>
+                          <span className="text-base md:text-lg text-gray-500 line-through">
+                            {license.originalPrice} Bs
+                          </span>
                         </div>
-                        <span className="inline-block px-2 py-0.5 bg-red-500/20 border border-red-500/50 rounded-full text-xs font-bold text-red-400">
+                        <span className="inline-block px-3 py-1 bg-red-500/20 border border-red-500/50 rounded-full text-xs font-bold text-red-400">
                           ¡Ahorra {license.originalPrice - license.price} Bs!
                         </span>
                       </div>
