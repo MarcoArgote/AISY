@@ -154,7 +154,7 @@ export const beatsData = [
   },
   {
     id: 4,
-    title: "Eladio Carrion x Pirlo Type Beat",
+    title: "Pirlo 420 x El Americano 4KT x Rochy RD",
     producer: "AISY",
     bpm: 98,
     key: "D Minor",
