@@ -152,6 +152,57 @@ export const beatsData = [
       }
     ]
   },
+  {
+    id: 4,
+    title: "Eladio Carrion x Pirlo Type Beat",
+    producer: "AISY",
+    bpm: 98,
+    key: "D Minor",
+    genre: "Trap",
+    tags: ["Dark", "Hard", "808"],
+    coverImage: "/beats/covers/4.jpg",
+    audioFile: "/beats/audio/AISYBEATS4.mp3",
+    licenses: [
+      {
+        name: "Licencia MP3",
+        price: 50,
+        originalPrice: 99,
+        features: [
+          "Formato MP3",
+          "Derechos No Exclusivos",
+          "2,000 Reproducciones",
+          "1 Video Musical"
+        ]
+      },
+      {
+        name: "Trackout",
+        price: 60,
+        originalPrice: 120,
+        features: [
+          "Todas las Pistas/Stems",
+          "Formatos WAV + MP3",
+          "Derechos No Exclusivos",
+          "Reproducciones Ilimitadas",
+          "Videos Musicales Ilimitados",
+          "Soporte Prioritario"
+        ]
+      },
+      {
+        name: "Derechos Exclusivos",
+        price: 110,
+        originalPrice: 220,
+        features: [
+          "Propiedad Exclusiva Completa",
+          "Todas las Pistas/Stems",
+          "Formatos WAV + MP3",
+          "Reproducciones Ilimitadas",
+          "Videos Ilimitados",
+          "Soporte VIP Dedicado",
+          "Beat retirado del catálogo"
+        ]
+      }
+    ]
+  },
   
 ];
 
