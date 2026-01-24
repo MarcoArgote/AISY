@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from './components/Header';
 import BeatGallery from './components/BeatGallery';
@@ -7,7 +8,60 @@ import AudioPlayer from './components/AudioPlayer';
 import LicensesSection from './components/LicensesSection';
 import SponsorsSection from './components/SponsorsSection';
 import ContactSection from './components/ContactSection';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
 import { beatsData } from './data/beats';
+
+function HomePage({ 
+  selectedBeat, 
+  isModalOpen, 
+  currentBeat, 
+  isPlaying, 
+  handleSelectBeat,
+  handleCloseModal,
+  handleTogglePlay,
+  handleNext,
+  handlePrevious 
+}) {
+  return (
+    <>
+      <Header />
+      
+      <main className={currentBeat ? 'pb-32' : 'pb-12'}>
+        <BeatGallery
+          beats={beatsData}
+          onSelectBeat={handleSelectBeat}
+          currentBeat={currentBeat}
+          isPlaying={isPlaying}
+          onTogglePlay={handleTogglePlay}
+        />
+        
+        <SponsorsSection />
+        
+        <LicensesSection />
+        
+        <ContactSection />
+      </main>
+
+      <BeatModal
+        beat={selectedBeat}
+        onClose={handleCloseModal}
+        isOpen={isModalOpen}
+      />
+
+      {currentBeat && (
+        <AudioPlayer
+          currentBeat={currentBeat}
+          isPlaying={isPlaying}
+          onTogglePlay={handleTogglePlay}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          allBeats={beatsData}
+        />
+      )}
+    </>
+  );
+}
 
 function App() {
   const [selectedBeat, setSelectedBeat] = useState(null);
@@ -79,42 +133,25 @@ function App() {
         />
       </div>
 
-      {/* Content */}
+      {/* Routes */}
       <div className="relative z-10">
-        <Header />
-        
-        <main className={currentBeat ? 'pb-32' : 'pb-12'}>
-          <BeatGallery
-            beats={beatsData}
-            onSelectBeat={handleSelectBeat}
-            currentBeat={currentBeat}
-            isPlaying={isPlaying}
-            onTogglePlay={handleTogglePlay}
-          />
-          
-          <SponsorsSection />
-          
-          <LicensesSection />
-          
-          <ContactSection />
-        </main>
-
-        <BeatModal
-          beat={selectedBeat}
-          onClose={handleCloseModal}
-          isOpen={isModalOpen}
-        />
-
-        {currentBeat && (
-          <AudioPlayer
-            currentBeat={currentBeat}
-            isPlaying={isPlaying}
-            onTogglePlay={handleTogglePlay}
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-            allBeats={beatsData}
-          />
-        )}
+        <Routes>
+          <Route path="/" element={
+            <HomePage
+              selectedBeat={selectedBeat}
+              isModalOpen={isModalOpen}
+              currentBeat={currentBeat}
+              isPlaying={isPlaying}
+              handleSelectBeat={handleSelectBeat}
+              handleCloseModal={handleCloseModal}
+              handleTogglePlay={handleTogglePlay}
+              handleNext={handleNext}
+              handlePrevious={handlePrevious}
+            />
+          } />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Routes>
       </div>
     </div>
   );

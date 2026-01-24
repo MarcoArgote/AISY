@@ -23,7 +23,6 @@ const licenseTypes = [
     icon: Crown,
     color: "from-yellow-500 to-orange-500",
     features: [
-      "Todas las Pistas/Stems",
       "Formatos WAV + MP3",
       "Derechos No Exclusivos",
       "Reproducciones Ilimitadas",
@@ -40,7 +39,6 @@ const licenseTypes = [
     color: "from-red-500 to-rose-500",
     features: [
       "Propiedad Exclusiva Completa",
-      "Todas las Pistas/Stems",
       "Formatos WAV + MP3",
       "Reproducciones Ilimitadas",
       "Videos Ilimitados",

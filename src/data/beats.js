@@ -37,7 +37,6 @@ export const beatsData = [
         price: 220,
         features: [
           "Propiedad Exclusiva Completa",
-          "Todas las Pistas/Stems",
           "Formatos WAV + MP3",
           "Reproducciones Ilimitadas",
           "Videos Ilimitados",
@@ -72,7 +71,6 @@ export const beatsData = [
         name: "Trackout",
         price: 120,
         features: [
-          "Todas las Pistas/Stems",
           "Formatos WAV + MP3",
           "Derechos No Exclusivos",
           "Reproducciones Ilimitadas",
@@ -85,7 +83,6 @@ export const beatsData = [
         price: 220,
         features: [
           "Propiedad Exclusiva Completa",
-          "Todas las Pistas/Stems",
           "Formatos WAV + MP3",
           "Reproducciones Ilimitadas",
           "Videos Ilimitados",
@@ -120,7 +117,6 @@ export const beatsData = [
         name: "Trackout",
         price: 120,
         features: [
-          "Todas las Pistas/Stems",
           "Formatos WAV + MP3",
           "Derechos No Exclusivos",
           "Reproducciones Ilimitadas",
@@ -133,7 +129,6 @@ export const beatsData = [
         price: 220,
         features: [
           "Propiedad Exclusiva Completa",
-          "Todas las Pistas/Stems",
           "Formatos WAV + MP3",
           "Reproducciones Ilimitadas",
           "Videos Ilimitados",

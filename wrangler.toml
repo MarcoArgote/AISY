@@ -1,0 +1,39 @@
+# wrangler.toml - Configuración de Cloudflare Worker
+
+name = "mybeats-api"
+main = "api/worker.js"
+compatibility_date = "2024-01-01"
+
+# Variables de entorno (reemplazar con tus valores)
+[vars]
+FRONTEND_URL = "https://mybeats.com"
+R2_PUBLIC_URL = "https://audio.mybeats.com"
+
+# Secrets (configurar con: wrangler secret put SECRET_NAME)
+# wrangler secret put JWT_SECRET
+# wrangler secret put STRIPE_SECRET_KEY
+# wrangler secret put STRIPE_WEBHOOK_SECRET
+
+# Cloudflare D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "mybeats-db"
+database_id = "tu-database-id" # Obtenido al crear la DB
+
+# Cloudflare R2 Buckets
+[[r2_buckets]]
+binding = "AUDIO_BUCKET"
+bucket_name = "mybeats-audio"
+
+[[r2_buckets]]
+binding = "LICENSES_BUCKET"
+bucket_name = "mybeats-licenses"
+
+[[r2_buckets]]
+binding = "COVERS_BUCKET"
+bucket_name = "mybeats-covers"
+
+# Cloudflare KV (para sesiones y cache)
+[[kv_namespaces]]
+binding = "KV"
+id = "tu-kv-id"
