@@ -7,7 +7,7 @@ compatibility_date = "2024-01-01"
 # Variables de entorno (reemplazar con tus valores)
 [vars]
 FRONTEND_URL = "https://mybeats.com"
-R2_PUBLIC_URL = "https://audio.mybeats.com"
+R2_PUBLIC_URL = "https://pub-089c50aada404ece8b78efd1892e21d1.r2.dev"
 
 # Secrets (configurar con: wrangler secret put SECRET_NAME)
 # wrangler secret put JWT_SECRET
