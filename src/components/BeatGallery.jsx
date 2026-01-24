@@ -11,35 +11,6 @@ export default function BeatGallery({ beats, onSelectBeat, currentBeat, isPlayin
   return (
     <section id="beats" className="py-12">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <motion.h2
-            className="text-4xl md:text-6xl font-bold mb-4"
-            animate={{
-              backgroundImage: [
-                'linear-gradient(to right, #06b6d4, #0ea5e9)',
-                'linear-gradient(to right, #0ea5e9, #06b6d4)',
-                'linear-gradient(to right, #06b6d4, #0ea5e9)',
-              ]
-            }}
-            transition={{ duration: 4, repeat: Infinity }}
-            style={{
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
-            AISY
-          </motion.h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Descubre nuestra colección de beats exclusivos.
-          </p>
-        </motion.div>
-
         {/* Genre Filter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

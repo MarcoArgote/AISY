@@ -2,103 +2,60 @@ import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from './components/Header';
-import BeatGallery from './components/BeatGallery';
 import BeatModal from './components/BeatModal';
 import AudioPlayer from './components/AudioPlayer';
-import LicensesSection from './components/LicensesSection';
-import SponsorsSection from './components/SponsorsSection';
-import ContactSection from './components/ContactSection';
+import ProducersPage from './pages/ProducersPage';
+import ProducerCatalogPage from './pages/ProducerCatalogPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import { beatsData } from './data/beats';
-
-function HomePage({ 
-  selectedBeat, 
-  isModalOpen, 
-  currentBeat, 
-  isPlaying, 
-  handleSelectBeat,
-  handleCloseModal,
-  handleTogglePlay,
-  handleNext,
-  handlePrevious 
-}) {
-  return (
-    <>
-      <Header />
-      
-      <main className={currentBeat ? 'pb-32' : 'pb-12'}>
-        <BeatGallery
-          beats={beatsData}
-          onSelectBeat={handleSelectBeat}
-          currentBeat={currentBeat}
-          isPlaying={isPlaying}
-          onTogglePlay={handleTogglePlay}
-        />
-        
-        <SponsorsSection />
-        
-        <LicensesSection />
-        
-        <ContactSection />
-      </main>
-
-      <BeatModal
-        beat={selectedBeat}
-        onClose={handleCloseModal}
-        isOpen={isModalOpen}
-      />
-
-      {currentBeat && (
-        <AudioPlayer
-          currentBeat={currentBeat}
-          isPlaying={isPlaying}
-          onTogglePlay={handleTogglePlay}
-          onNext={handleNext}
-          onPrevious={handlePrevious}
-          allBeats={beatsData}
-        />
-      )}
-    </>
-  );
-}
 
 function App() {
   const [selectedBeat, setSelectedBeat] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentBeat, setCurrentBeat] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentBeats, setCurrentBeats] = useState([]);
 
-  const handleSelectBeat = (beat) => {
+  const handleSelectBeat = (beat, beatsContext = []) => {
     setSelectedBeat(beat);
     setIsModalOpen(true);
+    setCurrentBeats(beatsContext);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
-  const handleTogglePlay = (beat) => {
+  const handleTogglePlay = (beat, beatsContext = []) => {
     if (currentBeat?.id === beat.id) {
       setIsPlaying(!isPlaying);
     } else {
       setCurrentBeat(beat);
+      setCurrentBeats(beatsContext);
       setIsPlaying(true);
     }
   };
 
   const handleNext = () => {
-    const currentIndex = beatsData.findIndex(beat => beat.id === currentBeat.id);
-    const nextIndex = (currentIndex + 1) % beatsData.length;
-    setCurrentBeat(beatsData[nextIndex]);
+    if (currentBeats.length === 0) return;
+    const currentIndex = currentBeats.findIndex(beat => beat.id === currentBeat.id);
+    const nextIndex = (currentIndex + 1) % currentBeats.length;
+    setCurrentBeat(currentBeats[nextIndex]);
     setIsPlaying(true);
   };
 
   const handlePrevious = () => {
-    const currentIndex = beatsData.findIndex(beat => beat.id === currentBeat.id);
-    const previousIndex = currentIndex === 0 ? beatsData.length - 1 : currentIndex - 1;
-    setCurrentBeat(beatsData[previousIndex]);
+    if (currentBeats.length === 0) return;
+    const currentIndex = currentBeats.findIndex(beat => beat.id === currentBeat.id);
+    const previousIndex = currentIndex === 0 ? currentBeats.length - 1 : currentIndex - 1;
+    setCurrentBeat(currentBeats[previousIndex]);
     setIsPlaying(true);
+  };
+
+  const handleClosePlayer = () => {
+    setCurrentBeat(null);
+    setIsPlaying(false);
+    setCurrentBeats([]);
   };
 
   return (
@@ -135,23 +92,44 @@ function App() {
 
       {/* Routes */}
       <div className="relative z-10">
+        <Header />
+        
         <Routes>
-          <Route path="/" element={
-            <HomePage
-              selectedBeat={selectedBeat}
-              isModalOpen={isModalOpen}
-              currentBeat={currentBeat}
-              isPlaying={isPlaying}
-              handleSelectBeat={handleSelectBeat}
-              handleCloseModal={handleCloseModal}
-              handleTogglePlay={handleTogglePlay}
-              handleNext={handleNext}
-              handlePrevious={handlePrevious}
-            />
-          } />
+          <Route path="/" element={<ProducersPage />} />
+          <Route 
+            path="/producer/:producerId" 
+            element={
+              <ProducerCatalogPage 
+                onSelectBeat={handleSelectBeat}
+                onTogglePlay={handleTogglePlay}
+                currentBeat={currentBeat}
+                isPlaying={isPlaying}
+              />
+            } 
+          />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
         </Routes>
+
+        {/* Global Beat Modal */}
+        <BeatModal
+          beat={selectedBeat}
+          onClose={handleCloseModal}
+          isOpen={isModalOpen}
+        />
+
+        {/* Global Audio Player */}
+        {currentBeat && (
+          <AudioPlayer
+            currentBeat={currentBeat}
+            isPlaying={isPlaying}
+            onTogglePlay={handleTogglePlay}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+            allBeats={currentBeats}
+            onClose={handleClosePlayer}
+          />
+        )}
       </div>
     </div>
   );

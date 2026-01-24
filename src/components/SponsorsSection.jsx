@@ -32,11 +32,9 @@ export default function SponsorsSection() {
   const duplicatedSponsors = [...sponsors, ...sponsors, ...sponsors, ...sponsors];
 
   return (
-    <section className="py-12 relative overflow-hidden">
-      {/* Gradient Overlays */}
-     
+    <section className="py-16 mt-16 relative overflow-hidden">
       {/* Scrolling Container */}
-      <div className="overflow-hidden">
+      <div className="relative">
         <motion.div
           className="flex gap-8 md:gap-16 items-center"
           animate={{

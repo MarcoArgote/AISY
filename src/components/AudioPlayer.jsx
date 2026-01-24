@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X } from 'lucide-react';
 
-export default function AudioPlayer({ currentBeat, isPlaying, onTogglePlay, onNext, onPrevious, allBeats }) {
+export default function AudioPlayer({ currentBeat, isPlaying, onTogglePlay, onNext, onPrevious, allBeats, onClose }) {
   const audioRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -92,6 +92,17 @@ export default function AudioPlayer({ currentBeat, isPlaying, onTogglePlay, onNe
             console.error('Error loading audio:', e);
           }}
         />
+
+        {/* Close Button */}
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onClose}
+          className="absolute top-2 right-2 p-2 hover:bg-white/10 rounded-full transition-colors z-10"
+          title="Cerrar reproductor"
+        >
+          <X className="w-5 h-5" />
+        </motion.button>
 
         {/* Progress Bar */}
         <div
