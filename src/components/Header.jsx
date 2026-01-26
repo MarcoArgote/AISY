@@ -19,16 +19,33 @@ export default function Header() {
 
   const handleMenuClick = (item) => {
     setIsMenuOpen(false);
+    
     if (item.type === 'scroll') {
-      // Si no estamos en la página principal, ir primero
+      // Si no estamos en la página principal, navegar primero
       if (location.pathname !== '/') {
         window.location.href = '/' + item.to;
       } else {
-        const element = document.querySelector(item.to);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        // Estamos en home, hacer scroll
+        setTimeout(() => {
+          const element = document.querySelector(item.to);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
       }
+    }
+  };
+
+  const handleProductoresClick = (e) => {
+    if (e) e.preventDefault();
+    setIsMenuOpen(false);
+    
+    if (location.pathname === '/') {
+      // Ya estamos en home, scroll al top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Ir a home
+      window.location.href = '/';
     }
   };
 
@@ -42,11 +59,11 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/">
-            <motion.div
-              className="flex items-center gap-3 cursor-pointer"
-              whileHover={{ scale: 1.05 }}
-            >
+          <motion.div
+            onClick={handleProductoresClick}
+            className="flex items-center gap-3 cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+          >
               <motion.img
                 src={`${R2_BASE_URL}/logoProds/logoMybeats.jpg`}
                 alt="MyBeats Logo"
@@ -70,7 +87,6 @@ export default function Header() {
                 <p className="text-xs text-gray-400 hidden sm:block">Beats para artistas Bolivianos</p>
               </div>
             </motion.div>
-          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
@@ -80,6 +96,18 @@ export default function Header() {
                   key={item.to}
                   onClick={() => handleMenuClick(item)}
                   className="text-gray-300 hover:text-white transition-colors font-medium"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {item.label}
+                </motion.button>
+              ) : item.to === '/' ? (
+                <motion.button
+                  key={item.to}
+                  onClick={handleProductoresClick}
+                  className={`text-gray-300 hover:text-white transition-colors font-medium ${
+                    location.pathname === item.to ? 'text-white' : ''
+                  }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -105,16 +133,15 @@ export default function Header() {
           </nav>
 
           {/* Desktop CTA Button */}
-          <Link to="/">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="hidden md:flex items-center gap-2 btn-primary"
-            >
-              <Sparkles className="w-4 h-4" />
-              Explorar
-            </motion.div>
-          </Link>
+          <motion.button
+            onClick={handleProductoresClick}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="hidden md:flex items-center gap-2 btn-primary"
+          >
+            <Sparkles className="w-4 h-4" />
+            Explorar
+          </motion.button>
 
           {/* Mobile Menu Button */}
           <motion.button
@@ -153,11 +180,24 @@ export default function Header() {
                     >
                       {item.label}
                     </motion.button>
+                  ) : item.to === '/' ? (
+                    <motion.button
+                      key={item.to}
+                      onClick={handleProductoresClick}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className={`text-gray-300 hover:text-white transition-colors font-medium py-3 px-4 rounded-lg hover:bg-white/5 text-left ${
+                        location.pathname === item.to ? 'text-white bg-white/5' : ''
+                      }`}
+                    >
+                      {item.label}
+                    </motion.button>
                   ) : (
                     <Link
                       key={item.to}
                       to={item.to}
-                      onClick={() => handleMenuClick(item)}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -172,17 +212,16 @@ export default function Header() {
                     </Link>
                   )
                 ))}
-                <Link to="/" onClick={() => handleMenuClick({ type: 'link' })}>
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex items-center gap-2 btn-primary justify-center mt-2"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    Explorar
-                  </motion.div>
-                </Link>
+                <motion.button
+                  onClick={handleProductoresClick}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="flex items-center gap-2 btn-primary justify-center mt-2"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Explorar
+                </motion.button>
               </nav>
             </motion.div>
           )}
