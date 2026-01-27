@@ -8,6 +8,7 @@ import ProducersPage from './pages/ProducersPage';
 import ProducerCatalogPage from './pages/ProducerCatalogPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const [selectedBeat, setSelectedBeat] = useState(null);
@@ -109,6 +110,7 @@ function App() {
           />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
 
         {/* Global Beat Modal */}
