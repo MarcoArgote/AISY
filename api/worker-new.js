@@ -412,9 +412,7 @@ router.all('*', () => {
 
 export default {
   async fetch(request, env, ctx) {
-    try {
-      return await router.handle(request, env, ctx);
-    } catch (err) {
+    return router.handle(request, env, ctx).catch(err => {
       console.error('Error en worker:', err);
       return new Response(JSON.stringify({ 
         error: 'Error interno del servidor',
@@ -423,6 +421,6 @@ export default {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
-    }
+    });
   }
 };

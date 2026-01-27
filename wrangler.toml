@@ -1,39 +1,33 @@
 # wrangler.toml - Configuración de Cloudflare Worker
 
 name = "mybeats-api"
-main = "api/worker.js"
+main = "api/worker-auth.js"
 compatibility_date = "2024-01-01"
 
-# Variables de entorno (reemplazar con tus valores)
+# Variables de entorno - PRODUCCIÓN
 [vars]
-FRONTEND_URL = "https://mybeats.com"
+FRONTEND_URL = "https://mybeats-catalog.netlify.app"
 R2_PUBLIC_URL = "https://pub-089c50aada404ece8b78efd1892e21d1.r2.dev"
+ENVIRONMENT = "production"
 
-# Secrets (configurar con: wrangler secret put SECRET_NAME)
-# wrangler secret put JWT_SECRET
-# wrangler secret put STRIPE_SECRET_KEY
-# wrangler secret put STRIPE_WEBHOOK_SECRET
+# Variables de desarrollo local
+[env.dev]
+[env.dev.vars]
+FRONTEND_URL = "http://localhost:3002"
+R2_PUBLIC_URL = "https://pub-089c50aada404ece8b78efd1892e21d1.r2.dev"
+ENVIRONMENT = "development"
 
 # Cloudflare D1 Database
 [[d1_databases]]
 binding = "DB"
 database_name = "mybeats-db"
-database_id = "tu-database-id" # Obtenido al crear la DB
+database_id = "4b8c5b0d-a769-4bae-a46b-57fd5e021195"
 
-# Cloudflare R2 Buckets
+# Cloudflare R2 Bucket (unificado)
 [[r2_buckets]]
-binding = "AUDIO_BUCKET"
-bucket_name = "mybeats-audio"
+binding = "R2"
+bucket_name = "mybeats-storage"
 
-[[r2_buckets]]
-binding = "LICENSES_BUCKET"
-bucket_name = "mybeats-licenses"
-
-[[r2_buckets]]
-binding = "COVERS_BUCKET"
-bucket_name = "mybeats-covers"
-
-# Cloudflare KV (para sesiones y cache)
-[[kv_namespaces]]
-binding = "KV"
-id = "tu-kv-id"
+# Para desarrollo local, descomentar:
+# [env.dev]
+# name = "mybeats-api-dev"

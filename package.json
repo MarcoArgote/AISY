@@ -5,12 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:worker": "npx wrangler dev api/worker-auth.js --local --port 8787",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:worker\" --names \"frontend,worker\" --prefix-colors \"cyan,magenta\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:worker": "npx wrangler deploy api/worker-auth.js",
+    "deploy:frontend": "npm run build && netlify deploy --prod",
+    "deploy:all": "npm run deploy:worker && npm run deploy:frontend"
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.6.0",
     "framer-motion": "^11.0.0",
+    "itty-router": "^5.0.22",
     "lucide-react": "^0.562.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -22,6 +28,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.0",
     "autoprefixer": "^10.4.19",
+    "concurrently": "^9.2.1",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "vite": "^6.0.0"

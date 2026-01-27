@@ -1,6 +1,6 @@
 // Servicio centralizado de API
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
 
 class ApiService {
   constructor() {
@@ -30,14 +30,19 @@ class ApiService {
       }
     };
 
-    const response = await fetch(url, config);
-    
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Error de red' }));
-      throw new Error(error.message || 'Error en la solicitud');
-    }
+    try {
+      const response = await fetch(url, config);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Error en la solicitud');
+      }
 
-    return response.json();
+      return data;
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
   }
 
   // Métodos de autenticación
@@ -45,6 +50,19 @@ class ApiService {
     return this.request('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password })
+    });
+  }
+
+  async register(email, password, username, fullName) {
+    return this.request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, username, fullName })
+    });
+  }
+
+  async getProfile() {
+    return this.request('/auth/me', {
+      method: 'GET'
     });
   }
 

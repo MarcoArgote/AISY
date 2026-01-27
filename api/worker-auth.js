@@ -1,13 +1,24 @@
 // Cloudflare Worker - Backend API para MyBeats
-import { Router } from 'itty-router';
+// Sin itty-router para mayor compatibilidad
 
-const router = Router();
+// ============= HELPERS =============
 
 // CORS headers
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+// Helper: Respuesta JSON
+const jsonResponse = (data, status = 200) => {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'application/json',
+    },
+  });
 };
 
 // Helper: Generar UUID
@@ -19,7 +30,7 @@ function generateUUID() {
   });
 }
 
-// Helper: Hash password con Web Crypto API
+// Helper: Hash password
 async function hashPassword(password) {
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
@@ -35,19 +46,15 @@ async function verifyPassword(password, hashedPassword) {
   return hash === hashedPassword;
 }
 
-// Helper: Generar JWT simple
+// Helper: Generar JWT
 async function generateToken(userId, email, role, secret) {
-  const header = {
-    alg: 'HS256',
-    typ: 'JWT'
-  };
-
+  const header = { alg: 'HS256', typ: 'JWT' };
   const payload = {
     userId,
     email,
     role,
     iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 7 días
+    exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)
   };
 
   const encoder = new TextEncoder();
@@ -93,19 +100,15 @@ async function verifyToken(token, secret) {
     );
     
     const valid = await crypto.subtle.verify('HMAC', key, signature, data);
-    
     if (!valid) return null;
     
     const payload = JSON.parse(atob(payloadB64));
-    
-    // Verificar expiración
     if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
       return null;
     }
     
     return payload;
   } catch (error) {
-    console.error('Error verifying token:', error);
     return null;
   }
 }
@@ -121,68 +124,58 @@ async function authenticate(request, env) {
   return await verifyToken(token, env.JWT_SECRET || 'default-secret-change-in-production');
 }
 
-// ============= RUTAS DE AUTENTICACIÓN =============
+// ============= HANDLERS =============
 
-// Registro de usuarios
-router.post('/api/auth/register', async (request, env) => {
+// Health check
+async function handleHealth(request, env) {
+  return jsonResponse({ 
+    status: 'ok',
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Registro
+async function handleRegister(request, env) {
   try {
     const { email, password, username, fullName } = await request.json();
 
-    // Validar datos
     if (!email || !password) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'Email y contraseña son requeridos' 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 400);
     }
 
-    // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'Email inválido' 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 400);
     }
 
-    // Validar longitud de contraseña
     if (password.length < 6) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'La contraseña debe tener al menos 6 caracteres' 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 400);
     }
 
-    // Verificar si el email ya existe
     const existingUser = await env.DB.prepare(
       'SELECT id FROM users WHERE email = ?'
     ).bind(email.toLowerCase()).first();
 
     if (existingUser) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'Este email ya está registrado' 
-      }), {
-        status: 409,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 409);
     }
 
-    // Generar ID y hash de contraseña
     const userId = generateUUID();
     const passwordHash = await hashPassword(password);
     const now = new Date().toISOString();
 
-    // Crear usuario
     await env.DB.prepare(`
       INSERT INTO users (id, email, password_hash, username, full_name, role, status, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -198,7 +191,6 @@ router.post('/api/auth/register', async (request, env) => {
       now
     ).run();
 
-    // Generar token
     const token = await generateToken(
       userId,
       email.toLowerCase(),
@@ -206,7 +198,7 @@ router.post('/api/auth/register', async (request, env) => {
       env.JWT_SECRET || 'default-secret-change-in-production'
     );
 
-    return new Response(JSON.stringify({
+    return jsonResponse({
       success: true,
       token,
       user: {
@@ -216,79 +208,56 @@ router.post('/api/auth/register', async (request, env) => {
         fullName: fullName || '',
         role: 'user'
       }
-    }), {
-      status: 201,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    }, 201);
 
   } catch (error) {
     console.error('Error en registro:', error);
-    return new Response(JSON.stringify({ 
+    return jsonResponse({ 
       success: false,
       error: 'Error en el servidor' 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    }, 500);
   }
-});
+}
 
-// Login de usuarios
-router.post('/api/auth/login', async (request, env) => {
+// Login
+async function handleLogin(request, env) {
   try {
     const { email, password } = await request.json();
 
-    // Validar datos
     if (!email || !password) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'Email y contraseña son requeridos' 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 400);
     }
 
-    // Buscar usuario
     const user = await env.DB.prepare(
       'SELECT id, email, password_hash, username, full_name, role, status FROM users WHERE email = ?'
     ).bind(email.toLowerCase()).first();
 
     if (!user) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'Email o contraseña incorrectos' 
-      }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 401);
     }
 
-    // Verificar contraseña
     const isValidPassword = await verifyPassword(password, user.password_hash);
     
     if (!isValidPassword) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'Email o contraseña incorrectos' 
-      }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 401);
     }
 
-    // Verificar estado del usuario
     if (user.status !== 'active') {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
-        error: 'Tu cuenta está suspendida. Contacta con soporte.' 
-      }), {
-        status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+        error: 'Tu cuenta está suspendida' 
+      }, 403);
     }
 
-    // Generar token
     const token = await generateToken(
       user.id,
       user.email,
@@ -296,7 +265,7 @@ router.post('/api/auth/login', async (request, env) => {
       env.JWT_SECRET || 'default-secret-change-in-production'
     );
 
-    return new Response(JSON.stringify({
+    return jsonResponse({
       success: true,
       token,
       user: {
@@ -306,54 +275,41 @@ router.post('/api/auth/login', async (request, env) => {
         fullName: user.full_name,
         role: user.role
       }
-    }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
 
   } catch (error) {
     console.error('Error en login:', error);
-    return new Response(JSON.stringify({ 
+    return jsonResponse({ 
       success: false,
       error: 'Error en el servidor' 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    }, 500);
   }
-});
+}
 
-// Obtener perfil del usuario autenticado
-router.get('/api/auth/me', async (request, env) => {
+// Obtener perfil
+async function handleGetProfile(request, env) {
   try {
     const user = await authenticate(request, env);
     
     if (!user) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'No autenticado' 
-      }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 401);
     }
 
-    // Obtener datos actualizados del usuario
     const userData = await env.DB.prepare(
       'SELECT id, email, username, full_name, role, status, created_at FROM users WHERE id = ?'
     ).bind(user.userId).first();
 
     if (!userData) {
-      return new Response(JSON.stringify({ 
+      return jsonResponse({ 
         success: false,
         error: 'Usuario no encontrado' 
-      }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      }, 404);
     }
 
-    return new Response(JSON.stringify({
+    return jsonResponse({
       success: true,
       user: {
         id: userData.id,
@@ -364,65 +320,65 @@ router.get('/api/auth/me', async (request, env) => {
         status: userData.status,
         createdAt: userData.created_at
       }
-    }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
 
   } catch (error) {
     console.error('Error obteniendo perfil:', error);
-    return new Response(JSON.stringify({ 
+    return jsonResponse({ 
       success: false,
       error: 'Error en el servidor' 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    }, 500);
   }
-});
+}
 
-// ============= OTRAS RUTAS =============
+// ============= ROUTER =============
 
-// Health check
-router.get('/api/health', () => {
-  return new Response(JSON.stringify({ 
-    status: 'ok',
-    timestamp: new Date().toISOString()
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
-});
+async function handleRequest(request, env) {
+  const url = new URL(request.url);
+  const path = url.pathname;
+  const method = request.method;
 
-// Manejo de OPTIONS para CORS
-router.options('*', () => {
-  return new Response(null, {
-    headers: corsHeaders
-  });
-});
+  // CORS preflight
+  if (method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
 
-// 404 handler
-router.all('*', () => {
-  return new Response(JSON.stringify({ error: 'Ruta no encontrada' }), {
-    status: 404,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
-});
+  // Health check
+  if (path === '/api/health' && method === 'GET') {
+    return handleHealth(request, env);
+  }
+
+  // Registro
+  if (path === '/api/auth/register' && method === 'POST') {
+    return handleRegister(request, env);
+  }
+
+  // Login
+  if (path === '/api/auth/login' && method === 'POST') {
+    return handleLogin(request, env);
+  }
+
+  // Obtener perfil
+  if (path === '/api/auth/me' && method === 'GET') {
+    return handleGetProfile(request, env);
+  }
+
+  // 404
+  return jsonResponse({ error: 'Ruta no encontrada' }, 404);
+}
 
 // ============= EXPORT =============
 
 export default {
   async fetch(request, env, ctx) {
     try {
-      return await router.handle(request, env, ctx);
-    } catch (err) {
-      console.error('Error en worker:', err);
-      return new Response(JSON.stringify({ 
+      return await handleRequest(request, env);
+    } catch (error) {
+      console.error('Error en worker:', error);
+      return jsonResponse({ 
         error: 'Error interno del servidor',
-        message: err.message 
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+        message: error.message 
+      }, 500);
     }
   }
 };
