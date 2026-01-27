@@ -4,7 +4,7 @@
 
 # Variables de entorno para producción
 [build.environment]
-  VITE_API_URL = "https://mybeats-api.varkperez.workers.dev/api"
+  VITE_API_URL = "https://mybeats-api.mybeats.workers.dev/api"
   VITE_R2_PUBLIC_URL = "https://pub-089c50aada404ece8b78efd1892e21d1.r2.dev"
 
 [[redirects]]
