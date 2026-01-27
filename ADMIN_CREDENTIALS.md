@@ -5,9 +5,10 @@
 **Email:** admin@mybeats.com  
 **Contraseña:** admin123
 
+**Hash SHA-256:** 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
+
 **⚠️ IMPORTANTE:**
 - Estas credenciales son TEMPORALES y solo para desarrollo/prueba
-- La contraseña usa un hash simple (NO seguro para producción)
 - BORRAR este archivo antes del deploy final
 - Cambiar la contraseña del admin en producción
 
